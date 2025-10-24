@@ -198,7 +198,7 @@ Gebruik hierbij de methodes uit de `GenreService`.
 
 ## Stap 6 (Bonus)
 Zorg voor een juiste status code als response.  
-Je kunt dit voor doet door gebruik te maken van de `ResponseEntity` of van de `@ResponseStatus`.
+Je kunt dit voor elkaar krijgen door gebruik te maken van de `ResponseEntity` of van de `@ResponseStatus`.
 
 Bij de POST mapping betekent dit dat je ook de "Location header" moet meesturen.
 Je kunt dit met behulp van de `UrlHelper` klasse doen in deze repository, of je gebruikt `URI.create("het pad waar je het nieuwe object kunt ophalen")`. 
