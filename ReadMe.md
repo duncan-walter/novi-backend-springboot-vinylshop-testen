@@ -204,3 +204,9 @@ Bij de POST mapping betekent dit dat je ook de "Location header" moet meesturen.
 Je kunt dit met behulp van de `UrlHelper` klasse doen in deze repository, of je gebruikt `URI.create("het pad waar je het nieuwe object kunt ophalen")`. 
 
 Gebruik je de `UrlHelper`, dan zet je die uiteraard netjes in een `helpers` map.
+
+## Stap 7 (Bonus) 
+Ter voorbereiding van de opdracht van volgende week, is het handig om alvast een interface te extraheren van de huidige `GenreService`. 
+Dit kun je doen met de `refactor > extract interface` optie van IntelliJ als je met je rechtermuisknop ergens in de `GenreService` klasse klikt.
+Zorg dat je alle `public` methodes meeneemt in de interface. 
+Zorg vervolgens dat jou `GenreController` in zijn constructor injection deze interface gebruikt in plaats van de `GenreService`.
