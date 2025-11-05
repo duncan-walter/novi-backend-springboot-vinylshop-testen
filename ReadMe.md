@@ -6,8 +6,11 @@ Je hebt inmiddels als het een en ander geleerd over SpringBoot en het opzetten v
 # Opdrachtbeschrijving
 
 De VinylShop-applicatie zal een complexe applicatie worden met meerdere architecturale lagen, validatie, een complexe database structuur, upload/download, security en testen. De opdracht zal er uiteindelijk ongeveer zo uit komen te zien: 
+<details>
+<summary> Mappenstructuur</summary>
 
 ```terminaloutput
+
 src
 ├── main
 │   ├── java
@@ -135,6 +138,7 @@ src
         ├── application-test.properties
         └── data-test.sql
 ```
+</details>
 
 Geen paniek, dit hoef je niet vandaag al zo te maken. 
 Laten we rustig beginnen met je eerste controller. 
