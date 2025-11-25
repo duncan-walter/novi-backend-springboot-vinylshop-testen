@@ -236,7 +236,7 @@ Voeg een actuele export van je postman collectie toe aan de `resources` map.
 
 Waarschijnlijk kun je hier dezelfde postman export voor gebruiken als in de vorige opdracht, maar controleer het wel even. 
 
-Test vooral ook goed of je geen `null` waardes hebt, omdat je een mapper niet goed ingevuld hebt. 
+Test vooral ook goed of je geen onverwachte `null` waardes terug krijgt, omdat je een mapper niet goed ingevuld hebt. 
 
 Test ook wat er gebeurt als je een PostMan request verstuurd die de validatieregels overtreedt.
 
