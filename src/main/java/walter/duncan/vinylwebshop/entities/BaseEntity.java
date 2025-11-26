@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public class BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "created_date", updatable = false)
@@ -16,19 +17,21 @@ public class BaseEntity {
     @Column(name = "modified_date")
     private LocalDateTime modifiedDate;
 
+    // Dit kan volgens mij ook met de @CreationTimestamp annotatie
     @PrePersist
     protected void onCreate() {
         this.createdDate = LocalDateTime.now();
         this.modifiedDate = createdDate;
     }
 
+    // Dit kan volgens mij ook met de @UpdateTimestamp annotatie
     @PreUpdate
     protected void onUpdate() {
         this.modifiedDate = LocalDateTime.now();
     }
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Long id) {
