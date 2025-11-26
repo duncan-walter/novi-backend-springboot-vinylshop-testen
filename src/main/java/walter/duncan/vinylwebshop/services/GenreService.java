@@ -1,8 +1,6 @@
 package walter.duncan.vinylwebshop.services;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import walter.duncan.vinylwebshop.entities.GenreEntity;
 import walter.duncan.vinylwebshop.repositories.GenreRepository;
@@ -10,15 +8,13 @@ import walter.duncan.vinylwebshop.repositories.GenreRepository;
 import java.util.List;
 
 @Service
-public class GenreService {
-    private final GenreRepository genreRepository;
-
+public class GenreService extends BaseService<GenreEntity, Long> {
     public GenreService(GenreRepository genreRepository) {
-        this.genreRepository = genreRepository;
+        super(genreRepository);
     }
 
     public List<GenreEntity> findAllGenres() {
-        return this.genreRepository.findAll();
+        return this.repository.findAll();
     }
 
     public GenreEntity findGenreById(Long id) {
@@ -28,7 +24,7 @@ public class GenreService {
     public GenreEntity createGenre(GenreEntity genreEntity) {
         genreEntity.setId(null);
 
-        return this.genreRepository.save(genreEntity);
+        return this.repository.save(genreEntity);
     }
 
     public GenreEntity updateGenre(Long id, GenreEntity genreEntity) {
@@ -36,34 +32,11 @@ public class GenreService {
         persistedEntity.setName(genreEntity.getName());
         persistedEntity.setDescription(genreEntity.getDescription());
 
-        return this.genreRepository.save(persistedEntity);
+        return this.repository.save(persistedEntity);
     }
 
     public void deleteGenre(Long id) {
         this.ensureExistsById(id);
-        this.genreRepository.deleteById(id);
-    }
-
-    private void ensureExistsById(Long id) {
-        if (!this.genreRepository.existsById(id)) {
-            this.throwNotFound(id);
-        }
-    }
-
-    private GenreEntity getExistingById(Long id) {
-        var genreEntity = this.genreRepository.findById(id);
-
-        if (genreEntity.isEmpty()) {
-            this.throwNotFound(id);
-        }
-
-        return genreEntity.get();
-    }
-
-    private void throwNotFound(Long id) {
-        throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Genre with id " + id + " not found"
-        );
+        this.repository.deleteById(id);
     }
 }
