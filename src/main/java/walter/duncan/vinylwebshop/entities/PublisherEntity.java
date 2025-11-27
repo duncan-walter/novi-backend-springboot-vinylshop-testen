@@ -13,6 +13,9 @@ public class PublisherEntity extends BaseEntity {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "contact_details")
+    private String contactDetails;
+
     public String getName() {
         return this.name;
     }
@@ -27,5 +30,13 @@ public class PublisherEntity extends BaseEntity {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getContactDetails() {
+        return this.contactDetails;
+    }
+
+    public void setContactDetails(String contactDetails) {
+        this.contactDetails = contactDetails;
     }
 }

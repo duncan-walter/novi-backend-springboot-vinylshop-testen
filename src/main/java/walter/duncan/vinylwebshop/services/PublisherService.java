@@ -31,6 +31,7 @@ public class PublisherService extends BaseService<PublisherEntity, Long> {
         var persistedEntity = this.getExistingById(id);
         persistedEntity.setName(publisherEntity.getName());
         persistedEntity.setAddress(publisherEntity.getAddress());
+        persistedEntity.setContactDetails(publisherEntity.getContactDetails());
 
         return this.repository.save(persistedEntity);
     }
