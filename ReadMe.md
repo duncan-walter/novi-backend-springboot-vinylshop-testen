@@ -40,7 +40,7 @@ Uiteraard ga je er ook zorgen dat jouw controllers en services met die DTO's en 
   - GenreResponseDTO
   - PublisherRequestDTO
   - PublisherResponseDTO
-- Je hebt drie models
+- Je hebt drie models (optioneel)
   - GenreModel
   - PublisherModel
   - BaseModel
@@ -59,7 +59,7 @@ Uiteraard ga je er ook zorgen dat jouw controllers en services met die DTO's en 
 
 ## Stap 0 (packages)
 
-MAak de juiste packages aan. De structuur van de nieuwe packages ziet er als volgt uit:
+Maak de juiste packages aan. De structuur van de nieuwe packages ziet er als volgt uit:
 
 - models
 - dtos
@@ -99,7 +99,10 @@ Maak een `PublisherRequestDto` met de volgende validatie regels:
 Zorg er bij beide DTO's voor dat er ook een goede message gemaakt wordt.
  
 ## Stap 3 (Models)
-Maak de `PublisherModel` en de `GenreModel`.
+Deze stap is optioneel en vooral nuttig wanneer je duidelijke, gescheiden functionaliteiten in je service hebt waarbij je specifieke, afgeleide data nodig hebt. 
+Voor dit voorbeeld implementeren we de models wel, ter illustratie.
+
+Maak de `PublisherModel` en de `GenreModel` in de `model` package.
 Beide hebben dezelfde inhoud als de bijbehorende entities. 
 Laat de klassen overerven van een `BaseModel`.
 Het `BaseModel` bevat de volgende data:
@@ -111,7 +114,10 @@ en de volgende afgeleide data:
 - public long getDaysSinceCreated() 
 - public boolean isEdited()
 
-## Stap 4 (Mappers)
+## Stap 4 (POM)
+Voeg de validatie dependency toe aan je pom.xml.
+
+## Stap 5 (Mappers)
 
 ### DTO mappers
 De DTO mappers gaan we simpel aanpakken. 
@@ -125,6 +131,8 @@ Je maakt een `PublisherDTOMapper` met de volgende methodes:
 - public PublisherResponseDTO mapToDto(PublisherModel publisher)
 - public List<PublisherResponseDTO> mapToDto(List<PublisherModel> publishers)
 - public PublisherModel mapToModel(PublisherRequestDTO dto)
+
+Vergeet niet de juiste annotatie boven de mapper klassen te zetten.
 
 > Merk op dat elke DTOMapper-klasse dus twee methodes heeft met de naam "mapToDto". Één met een model als input en een dto als output en één met een List<model> als input en een List<dto> als output. Dit noemen we "method overloading". 
 
@@ -189,8 +197,9 @@ Maak ook de `PublisherEntityMapper` waarin je de volgende methodes vanuit de int
 - public PublisherEntity toEntity(PublisherModel model)
 
 Maak in beide gevallen gebruik van de `toEntityBase` en `fromEntityBase` default methodes, zodat je niet elke keer de BaseEntity of BaseModel opnieuw hoeft te vertalen.
+Vergeet ook hier niet de juiste annotatie boven de mapper klassen te zetten.
 
-## Stap 5 (Service) 
+## Stap 6 (Service) 
 
 Injecteer de `GenreEntityMapper` in de `GenreService` en injecteer de `PublisherEntityMapper` in de `PublisherService`.
 
@@ -211,7 +220,7 @@ Hier is een voorbeeld van de aangepaste `createGenre` methode:
 
 Pas de `PublisherService` op dezelfde manier aan.
 
-## Stap 6 (Controller)
+## Stap 7 (Controller)
 
 Injecteer de `GenreDtoMapper` in de `GenreController` en injecteer de `PublisherDTOMapper` in de `PublisherController`.
 
@@ -231,7 +240,7 @@ Vergeet niet om de `@Valid` annotatie te gebruiken, anders worden je validatie r
 
 
 
-## Stap 7 (Postman)
+## Stap 8 (Postman)
 Voeg een actuele export van je postman collectie toe aan de `resources` map.
 
 Waarschijnlijk kun je hier dezelfde postman export voor gebruiken als in de vorige opdracht, maar controleer het wel even. 
