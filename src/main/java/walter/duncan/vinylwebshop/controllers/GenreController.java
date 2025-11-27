@@ -5,17 +5,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import walter.duncan.vinylwebshop.entities.GenreEntity;
+import walter.duncan.vinylwebshop.helpers.UrlHelper;
 import walter.duncan.vinylwebshop.services.GenreService;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/genres")
 public class GenreController {
+    private final UrlHelper urlHelper;
     private final GenreService genreService;
 
-    public GenreController(GenreService genreService) {
+    public GenreController(UrlHelper urlHelper, GenreService genreService) {
+        this.urlHelper = urlHelper;
         this.genreService = genreService;
     }
 
@@ -35,7 +37,7 @@ public class GenreController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<GenreEntity> createGenre(@RequestBody GenreEntity genre) {
         var genreEntity = this.genreService.createGenre(genre);
-        var location = URI.create(String.format("http://localhost:8080/genres/%s", genreEntity.getId()));
+        var location = this.urlHelper.getResourceUri(genreEntity.getId());
 
         return ResponseEntity.created(location).body(genreEntity);
     }
@@ -44,7 +46,7 @@ public class GenreController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<GenreEntity> updateGenre(@PathVariable Long id, @RequestBody GenreEntity genre) {
         var updatedGenre = this.genreService.updateGenre(id, genre);
-        var location = URI.create(String.format("http://localhost:8080/genres/%s", id));
+        var location = this.urlHelper.getResourceUri(updatedGenre.getId());
 
         return ResponseEntity.ok().location(location).body(updatedGenre);
     }

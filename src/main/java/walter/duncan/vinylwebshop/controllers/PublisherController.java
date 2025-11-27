@@ -3,18 +3,21 @@ package walter.duncan.vinylwebshop.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import walter.duncan.vinylwebshop.entities.PublisherEntity;
+import walter.duncan.vinylwebshop.helpers.UrlHelper;
 import walter.duncan.vinylwebshop.services.PublisherService;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/publishers")
 public class PublisherController {
+    private final UrlHelper urlHelper;
     private final PublisherService publisherService;
 
-    public PublisherController(PublisherService publisherService) {
+    public PublisherController(UrlHelper urlHelper, PublisherService publisherService) {
+        this.urlHelper = urlHelper;
         this.publisherService = publisherService;
     }
 
@@ -34,7 +37,7 @@ public class PublisherController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<PublisherEntity> createPublisher(@RequestBody PublisherEntity publisher) {
         var publisherEntity = this.publisherService.createPublisher(publisher);
-        var location = URI.create(String.format("http://localhost:8080/publisher/%s", publisherEntity.getId()));
+        var location = this.urlHelper.getResourceUri(publisherEntity.getId());
 
         return ResponseEntity.created(location).body(publisherEntity);
     }
@@ -43,7 +46,7 @@ public class PublisherController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<PublisherEntity> updatePublisher(@PathVariable Long id, @RequestBody PublisherEntity publisher) {
         var updatePublisher = this.publisherService.updatePublisher(id, publisher);
-        var location = URI.create(String.format("http://localhost:8080/publisher/%s", id));
+        var location = this.urlHelper.getResourceUri(updatePublisher.getId());
 
         return ResponseEntity.ok().location(location).body(updatePublisher);
     }
