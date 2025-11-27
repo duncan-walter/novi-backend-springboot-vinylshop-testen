@@ -1,6 +1,8 @@
 package walter.duncan.vinylwebshop.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -11,39 +13,20 @@ public abstract class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @CreationTimestamp
     @Column(name = "created_date", updatable = false)
     private LocalDateTime createdDate;
 
+    @UpdateTimestamp
     @Column(name = "modified_date")
     private LocalDateTime modifiedDate;
-
-    // Dit kan volgens mij ook met de @CreationTimestamp annotatie
-    @PrePersist
-    protected void onCreate() {
-        this.createdDate = LocalDateTime.now();
-        this.modifiedDate = createdDate;
-    }
-
-    // Dit kan volgens mij ook met de @UpdateTimestamp annotatie
-    @PreUpdate
-    protected void onUpdate() {
-        this.modifiedDate = LocalDateTime.now();
-    }
 
     public Long getId() {
         return this.id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return this.createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createDate) {
-        this.createdDate = createDate;
     }
 
     public LocalDateTime getModifiedDate() {
@@ -52,5 +35,9 @@ public abstract class BaseEntity {
 
     public void setModifiedDate(LocalDateTime modifiedDate) {
         this.modifiedDate = modifiedDate;
+    }
+
+    public void clearId() {
+        this.id = null;
     }
 }

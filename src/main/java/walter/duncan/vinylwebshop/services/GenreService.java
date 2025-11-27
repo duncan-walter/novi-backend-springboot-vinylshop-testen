@@ -22,7 +22,7 @@ public class GenreService extends BaseService<GenreEntity, Long> {
     }
 
     public GenreEntity createGenre(GenreEntity genreEntity) {
-        genreEntity.setId(null);
+        genreEntity.clearId();
 
         return this.repository.save(genreEntity);
     }

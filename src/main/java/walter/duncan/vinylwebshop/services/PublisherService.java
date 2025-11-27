@@ -22,7 +22,7 @@ public class PublisherService extends BaseService<PublisherEntity, Long> {
     }
 
     public PublisherEntity createPublisher(PublisherEntity publisherEntity) {
-        publisherEntity.setId(null);
+        publisherEntity.clearId();
 
         return this.repository.save(publisherEntity);
     }
