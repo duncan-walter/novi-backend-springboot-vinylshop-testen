@@ -1,7 +1,7 @@
 # Inleiding
 
 Je hebt in de vorige opdracht de architectuur van de VinylShop applicatie compleet gemaakt door een controller-service-repository patroon te implementeren.
-Ook heb je de data gestructureerd, zodat elke laag met een eigen datamodel communiceert.  
+Ook heb je de data gestructureerd, zodat je de communicatie met de buitenwereld en met de database gescheiden houdt. Optioneel hebt je zelfs interne modellen gemaakt.  
 In deze opdracht ga je nog drie entiteiten aan de casus toevoegen, je gaat voor al deze entiteiten nog eens oefenen om de complete architectuur uit te werken en datamodellen te maken. 
 Daarnaast ga je ook alle entiteiten met elkaar koppelen door middel van relaties. Ook de entiteiten die je al had, zul je daarvoor moeten aanpassen. 
 
@@ -18,7 +18,9 @@ Je gaat de collectie entiteiten fors uitbreiden door de volgende entiteiten te m
 
 Je gaat relaties leggen tussen deze entiteiten, zodat het er als volgt uit ziet:
 
-[//]: # (TODO: Klassendiagram relaties)
+![Klassendiagram.png](image/Klassendiagram.png)
+
+Aleen de `AlbumCover` bewaren we nog even voor de volgende les.
 
 # Randvoorwaarden
 
@@ -28,7 +30,6 @@ Je gaat relaties leggen tussen deze entiteiten, zodat het er als volgt uit ziet:
   - repositories
   - services
   - dtos
-  - models 
   - entities
 - Je hebt vijf controllers:
     - GenreController
@@ -55,16 +56,10 @@ Je gaat relaties leggen tussen deze entiteiten, zodat het er als volgt uit ziet:
     - AlbumEntity
     - ArtistEntity
     - StockEntity
-- Je hebt voor alle vijf entiteiten ten minste twee DTO's:
+- Je hebt voor alle vijf entiteiten ten minste twee DTO's en voor Album een extra DTO:
   - ...RequestDTO
   - ...ResponseDTO
-- Je hebt zes models
-  - GenreModel
-  - PublisherModel
-  - AlbumModel
-  - ArtistModel
-  - StockModel
-  - BaseModel
+  - AlbumExtendedResponseDTO
 - Je hebt vier mappers
   - GenreDTOMapper
   - GenreEntityMapper
@@ -78,7 +73,7 @@ Je gaat relaties leggen tussen deze entiteiten, zodat het er als volgt uit ziet:
 
 # Stappenplan
 
-## Stap 1
+## Stap 1 (Basis Entiteiten)
 
 Maak eerst de kale `AlbumEntity`, `ArtistEntity` en `StockEntity` zonder relaties, die voegen we later toe.
 
@@ -115,11 +110,11 @@ public class StockEntity extends BaseEntity {
 }
 ```
 
-## Stap 2 (entiteiten en hun architectuur)
+## Stap 2 (Architectuur)
 
 Voeg voor al deze entiteiten ook een Controller, Service en Repository toe. 
 
-> Tip: het is makkelijk om onderaan de architectuur te beginnen, omdat een repository alleen een entity nodig heeft, maar ee nservice heeft een repository nodig en een controller heeft een service nodig.
+> Tip: het is makkelijk om onderaan de architectuur te beginnen, omdat een repository alleen een entity nodig heeft, maar een service heeft een repository nodig en een controller heeft een service nodig.
 
 De repositories mag je extra functionaliteiten geven, boven op de standaard functionaliteiten van JPA:
 
@@ -143,7 +138,7 @@ Deze repository krijgt ook één extra functionaliteit met de @Query annotatie:
     List<AlbumEntity> findAlbumsWithStock();
 ```
 
-Zorg dat de controllers ten minste de volgende endpoints hebben: 
+Zorg dat elke controllers ten minste de volgende endpoints hebben: 
 - GET (all)
 - GET (one)
 - POST
@@ -157,7 +152,8 @@ Probeer met één functionaliteit te beginnen, bijvoorbeeld de "get-all". Van da
 
 Het lijkt veel werk, dat is het ook, maar als je het systematisch aanpakt, kun je het stap voor stap oplossen.
 
-## Stap 3 (relaties in de entiteiten)
+## Stap 3 (Relaties)
+Je hebt al de basis opzet van de klassen gemaakt, maar deze opdracht gaat over relaties.
 
 Voeg relaties toe in de entiteiten. Doe dat op de volgende manier:
 - Een Album heeft 1 publisher, een Publisher heeft meerdere Albums
@@ -168,7 +164,128 @@ Voeg relaties toe in de entiteiten. Doe dat op de volgende manier:
 Gebruik de `@OneToMany`, `@ManyToOne` en `@ManyToMany` annotaties. 
 Vergeet ook niet de `mappedBy` op de juiste plekken in te vullen.
 
-## Stap 4 (relaties in de models en DTO's) 
+## Stap 4 (Data)
+Vul de data.sql met data voor je nieuwe entiteiten. 
+Voeg daar ook relaties aan toe. 
 
-## Stap 5 (Functionaliteit)
+Relaties kun je op 2 manieren in de data.sql zetten:
+- Meteen in het initiële **INSERT** statement. Let er dan wel op dat je de **INSERT**s in de goede volgorde zet. Je kunt geen "banaan" aan een specifieke "fruitschaal" toevoegen als die "fruitschaal" nog niet bestaat.
+- Je kunt er ook voor kiezen om de **INSERT** statements simpel te houden, zonder relaties, en de relaties met **UPDATE** statements later toe te voegen. De volgorde is hier minder belangrijk, omdat alle Primary Keys al gemaakt zijn.
+
+Voorbeeld van een Stock met een Album: 
+```sql
+insert into stock (condition, price, album_id)
+values ('good', 19.95, 1);
+```
+
+Voorbeeld van een update:
+```sql
+UPDATE Albums
+SET genre_id = (
+    SELECT id FROM genres WHERE name = 'House'
+)
+WHERE title = 'Hakkuhbar';
+
+```
+
+Start je applicatie op en kijk in je database of alle Foreign Keys en koppeltabellen goed gemaakt zijn en of alle dat er in staat.
+
+> Wil je het dynamisch maken, probeer dan geen "hardcoded" foreign keys in je data.sql te zetten, maar zet daarvoor in de plaats een select statement tussen haakjes.
+
+## Stap 5 (DTO's) 
+
+Nu je de relaties in je entiteiten hebt, is je database in orde, maar je API nog niet. Wanneer je jouw API aanspreekt via PostMan, krijg je nog niet de data over relaties te zien. Niet alle entiteiten hoeven alle relaties te laten zien, dat zou al snel erg ingewikkeld worden.
+
+
+### Request DTO's
+- `AlbumRequestDto` bevat een verplicht "title"-veld dat 3 tot 100 tekens lang moet zijn en een "publishedYear" veld dat tussen 1877 en 2100 moet liggen. Het bevat verder een "genreId" en "publisherId". De relatie met Artis en Stock gaan we op een andere manier doen.
+- `ArtistRequestDto` bevat een verplicht "name" veld en een optioneel "biography" veld.
+- `StockRequestDto` bevat een optionele "condition" en verplichte "price" welk een positief komma getal moet zijn.
+
+### Response DTO's
+- `AlbumResponseDto` bevat naast de "id", "title" en "publishedYear", ook een complete Genre en Publisher.
+- Maak daarnaast ook nog een `AlbumExtendedResponseDto` die van `AlbumResponseDto` overerft en daar een lijst van Stock aan toevoegt.
+- `ArtistResponseDto` en `StockResponseDto` bevatten "gewoon" alle velden uit de entiteit.
+
+> Let er op dat "entiteiten" alleen in de communicatie met de database thuis horen.
+
+### Mappers 
+Zorg dat de `AlbumDTOMapper` en de `ArtistDTOMapper` de relaties meenemen in de vertaling. 
+Let op dat je deze vertaling alleen doet als er een relatie is, anders krijg je NullPointerExceptions, in het bijzonder bij de vertaling van Entity naar DTO.  
+Als je een relatie moet mappen, maak dan gebruik van Dependency Injection om de desbetreffende mapper aan te spreken, dat scheelt je dubbele code.
+
+> Tip: gebruik eventueel Jackson annotaties in je DTO's om het schooner te houden.
+
+Maak ook een `AlbumExtendedDTOMapper`, die de `AlbumExtendedResponseDto` returned. Je kunt dit doen door gewoon een nieuwe Mapper te maken, maar idealiter doe je dit door AlbumDtoMapper te extenden, aangezien alleen de "mapToDto" methode nodig is en niet de "mapToEntity". 
+
+Omdat `AlbumExtendedResponseDto` overerft van `AlbumResponseDto`, is dit ook mogelijk. In de AlbumExtendedResponseDto overschrijf je dan de functies die de originele DTO definieerde en zorg je dat het ook de stock in de DTO zetten. 
+
+
+## Stap 6 (Functionaliteit)
+
+Je hebt nu de Entiteiten en DTO's voor Album, Artist, Stock, Genre en Publisher. Je hebt ook Controllers, Services en Repositories voor al deze modellen, met basis "CRUD" functionaliteiten. 
+
+Je zult merken dat je nu nog geen relaties kunt leggen via de API (alleen nog in de data.sql). Wanneer je nu een Album opvraagt via PostMan, zie je dat Genre en Publisher altijd null zijn. Daar gaan we verandering in brengen door de functionaliteit te updaten. 
+
+### Genre en Publisher
+De Genre en Publisher gaan we aan de Album toevoegen via de POST en/of PUT mapping. Daarmee maak je het mogelijk om direct bij het aanmaken van een nieuw Album de Genre en Publisher mee te geven, of het later toe te voegen (in twee stappen). 
+
+Pas de `albumService.createAlbum` aan, zodat je vóór de `repository.save` eerst de GenreEntity en dan de PublisherEntity aan de AblbumEntity toevoegt. 
+
+Hoe kom je aan die entities?
+
+Daar kun je het best een helper methode voor maken, zoals: 
+```java
+ private GenreEntity getGenreEntity(long genreId){
+    return genreRepository.findById(genreId).orElseThrow(() -> new EntityNotFoundException("genre " + genreId + " not found"));
+}
+```
+
+Vergeet niet om eerst te controleren of de RequestDto wel een genreID of een publisherId bevat. Als dat niet zo is, dan hoef je namelijk niks te doen.
+
+Implementeer deze functionaliteit op dezelfde manier in de `updateAlbum` functie. Aangezien PUT er van uit gaat dat je een compleet object update, hoe je hier niet te checken of de RequestDto wel bepaalde items heeft. Die verantwoordelijkheid ligt bij PUT bij de gebruiker.
+
+### Stock
+
+We hebben al een functionaliteit om een Stock aan een Album toe te voegen. Dat is namelijk de POST mapping in de StockController. 
+
+We hebben nog geen functionaliteit om te zien welke Stocks een Album heeft. Laten we die maken door de `@GetMapping("/{id}")` mapping in `AlbumController` aan te passen naar `public ResponseEntity<AlbumExtendedResponseDTO> getAlbumById(@PathVariable Long id)`.  
+Hier maak je dus gebruik van de `AlbumExtendedResponseDto` met die extra "List<Stock>". 
+
+Om dit mogelijk te maken, zul je ook de `albumService.findAlbumById(id)` moeten aanpassen zodat deze gebruik maakt van de `AlbumExtendedDTOMapper`. 
+
+### Artist
+
+De artist gaan we aan Album toevoegen via een eigen API endpoint. 
+
+Maak de volgende endpoints om de Artist te linken en te unlinken van een specifiek album.
+
+```java
+  @PostMapping("/{albumId}/artists/{artistId}")
+    public ResponseEntity<Void> linkArtist(@PathVariable Long albumId, @PathVariable Long artistId) {
+        albumService.linkArtist(albumId, artistId);
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/{albumId}/artists/{artistId}")
+    public ResponseEntity<Void> unlinkArtist(@PathVariable Long albumId, @PathVariable Long artistId) {
+        albumService.unlinkArtist(albumId, artistId);
+        return ResponseEntity.ok().build();
+    }
+```
+
+Zorg dat je dit ook in de service goed uitwerkt. Onthoud dat Album de eigenaar van deze relatie is.
+
+### Extra 
+
+[//]: # (TODO: deze afmaken)
+Als laatste is het ook leuk om wat extra functionaliteit te maken om: 
+- alle Artiesten van een Album op te halen
+- alle Albums met Stock op te halen.
+
+
+## Stap 7 (Delete)
+
+[//]: # (TODO: delete probleem uitleggen en laten oplossen)
+
+
 
