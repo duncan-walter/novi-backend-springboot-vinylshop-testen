@@ -125,17 +125,26 @@ Deze repository krijgt 3 extra functies:
 - List<StockEntity> findByAlbumId(Long albumId);
 
 **ArtistRepository**
-Deze repository krijgt 1 extra functie, met de @Query annotatie:
+Deze repository krijgt 1 extra functie:
 ```java
-	@Query("SELECT DISTINCT a FROM ArtistEntity a JOIN a.albums al WHERE al.id = :albumId")
-    List<ArtistEntity> findArtistsByAlbumId(@Param("albumId") Long albumId);
+    List<ArtistEntity> findArtistsByAlbumsId(@Param("albumId") Long albumId);
+
 ```
 
 **AlbumRepository**
-Deze repository krijgt ook één extra functionaliteit met de @Query annotatie:
+Deze repository krijgt twee extra functionaliteit:
+
+[//]: # (```java)
+
+[//]: # (    @Query&#40;"SELECT DISTINCT a FROM AlbumEntity a JOIN FETCH a.stockItems WHERE a.stockItems IS NOT EMPTY"&#41;)
+
+[//]: # (    List<AlbumEntity> findAlbumsWithStock&#40;&#41;;)
+
+[//]: # (```)
 ```java
-    @Query("SELECT DISTINCT a FROM AlbumEntity a JOIN FETCH a.stockItems WHERE a.stockItems IS NOT EMPTY")
-    List<AlbumEntity> findAlbumsWithStock();
+        List<AlbumEntity> findByStockItemsNotEmpty();
+        List<AlbumEntity> findByStockItemsEmpty();
+        List<AlbumEntity> findByGenre_Id(Long genreId);
 ```
 
 Zorg dat elke controllers ten minste de volgende endpoints hebben: 
@@ -277,10 +286,37 @@ Zorg dat je dit ook in de service goed uitwerkt. Onthoud dat Album de eigenaar v
 
 ### Extra 
 
-[//]: # (TODO: deze afmaken)
 Als laatste is het ook leuk om wat extra functionaliteit te maken om: 
 - alle Artiesten van een Album op te halen
 - alle Albums met Stock op te halen.
+
+#### Alle Artiesten van een Album
+Maak in de `AlbumController` een methode:
+```java
+@GetMapping("/{id}/artists")
+public ResponseEntity<List<ArtistResponseDTO>> linkArtist(@PathVariable Long id){
+    List<ArtistResponseDTO> artists = artistService.getArtistsForAlbum(id);
+    return ResponseEntity.ok(artists);
+}
+```
+
+Zoals je ziet maakt deze methode gebruik van de `ArtistService`, dus
+maak de methode `artistService.getArtistsForAlbum`.
+
+Deze service-methode maakt gebruik van de repository-methode `artistRepository.findArtistsByAlbumsId`. 
+
+#### Alle Albums met een Stock
+Het is voor je winkel personeel ook best handig om te weten welke albums op voorraad zijn en welke niet, dus laten we daar ook en methode voor maken. 
+
+We gaan dit "makkelijk" oplossen door aan de bestaande "get all albums" methode in de `AlbumController` een optionele parameter toe te voegen: 
+```java
+@RequestParam(required = false) Boolean stock
+```
+
+Als die parameter niet `null` is, dan roepen we de `albumService.getAlbumsWithStock` aan.
+Als dit parameter wel `null` is, dan roepen we gewoon `albumService.findAlbumById` aan.
+
+De `albumService.getAlbumsWithStock` returned een "List<AlbumResponseDTO>" en ontvangt een "Boolean stock" als input. Zorg dat de functie alle albums MET stock returned als de stock-boolean TRUE is en alle albums ZONDER stock returned als de stock-boolen FALSE is.
 
 
 ## Stap 7 (Delete)
