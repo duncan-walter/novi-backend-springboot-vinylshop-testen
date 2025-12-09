@@ -37,7 +37,7 @@ Aleen de `AlbumCover` bewaren we nog even voor de volgende les.
     - AlbumController
     - ArtistController
     - StockController
-- Je hebt vijf service:
+- Je hebt vijf services:
     - GenreService
     - PublisherService
     - AlbumService
@@ -116,36 +116,14 @@ Voeg voor al deze entiteiten ook een Controller, Service en Repository toe.
 
 > Tip: het is makkelijk om onderaan de architectuur te beginnen, omdat een repository alleen een entity nodig heeft, maar een service heeft een repository nodig en een controller heeft een service nodig.
 
-De repositories mag je extra functionaliteiten geven, boven op de standaard functionaliteiten van JPA:
-
-**StockRepository**
-Deze repository krijgt 3 extra functies:
-- Optional<StockEntity> findByIdAndAlbumId(Long id, Long albumId);
-- void deleteByIdAndAlbumId(Long id, Long albumId);
-- List<StockEntity> findByAlbumId(Long albumId);
-
-**ArtistRepository**
-Deze repository krijgt 1 extra functie:
+Je mag voor nu basis repositories aanmaken, zoals: 
 ```java
-    List<ArtistEntity> findArtistsByAlbumsId(@Param("albumId") Long albumId);
+public interface ArtistRepository extends JpaRepository<ArtistEntity, Long> {
 
+}
 ```
 
-**AlbumRepository**
-Deze repository krijgt twee extra functionaliteit:
-
-[//]: # (```java)
-
-[//]: # (    @Query&#40;"SELECT DISTINCT a FROM AlbumEntity a JOIN FETCH a.stockItems WHERE a.stockItems IS NOT EMPTY"&#41;)
-
-[//]: # (    List<AlbumEntity> findAlbumsWithStock&#40;&#41;;)
-
-[//]: # (```)
-```java
-        List<AlbumEntity> findByStockItemsNotEmpty();
-        List<AlbumEntity> findByStockItemsEmpty();
-        List<AlbumEntity> findByGenre_Id(Long genreId);
-```
+In stap 4 zul je hier wat extra functionaliteiten aan toevoegen, maar dat kan pas nadat je in stap 3 de relaties hebt gelegd.
 
 Zorg dat elke controllers ten minste de volgende endpoints hebben: 
 - GET (all)
@@ -156,7 +134,8 @@ Zorg dat elke controllers ten minste de volgende endpoints hebben:
 
 Weet je niet meer hoe je de service, controller en repository maakt, kijk dan nog eens bij de vorige opdracht.
 
-Het is natuurlijk lastig om de controller en service te maken, zonder DTO, model en zelfs de mappers heb je er bij nodig.
+Het is natuurlijk lastig om de controller en service te maken, zonder daar meteen de DTO en de mappers bij te maken. Het is daarom handig om alvast een basis DTO en mapper voor elke entiteit te maken. Let er daarbij op dat we in stap 5 pas de relaties aan die DTO's gaan toevoegen en dat natuurlijk ook in de mapper verwerkt moet worden.
+
 Probeer met één functionaliteit te beginnen, bijvoorbeeld de "get-all". Van daaruit kun je verder bouwen met de volgende functionaliteit. 
 
 Het lijkt veel werk, dat is het ook, maar als je het systematisch aanpakt, kun je het stap voor stap oplossen.
@@ -166,13 +145,48 @@ Je hebt al de basis opzet van de klassen gemaakt, maar deze opdracht gaat over r
 
 Voeg relaties toe in de entiteiten. Doe dat op de volgende manier:
 - Een Album heeft 1 publisher, een Publisher heeft meerdere Albums
-- Een Album heeft meerdere Stocks, een Stock heeft 1 Album
+- Een Album heeft meerdere Stocks (noem deze variabele "stockItems", want "stock" is al meervoud), een Stock heeft 1 Album
 - Een Album heeft meerdere Artists, een Artist heeft meerdere Albums
 - Een Album heeft 1 Genre, een Genre heeft geen Albums (dit is een unidirectionele relatie)
 
 Gebruik de `@OneToMany`, `@ManyToOne` en `@ManyToMany` annotaties. 
 Vergeet ook niet de `mappedBy` op de juiste plekken in te vullen.
 
+## Stap 4 (Repositories)
+
+
+Nu je relaties hebt gelegd tussen entiteiten, mag je (sommige) repositories extra functionaliteiten geven boven op de standaard functionaliteiten van JPA:
+
+
+**StockRepository**
+Deze repository krijgt 3 extra functies:
+```java
+Optional<StockEntity> findByIdAndAlbumId(Long id, Long albumId);
+
+void deleteByIdAndAlbumId(Long id, Long albumId);
+
+List<StockEntity> findByAlbumId(Long albumId);
+```
+**ArtistRepository**
+Deze repository krijgt 1 extra functie:
+```java
+    List<ArtistEntity> findArtistsByAlbumsId(@Param("albumId") Long albumId);
+
+```
+
+**AlbumRepository**
+Deze repository krijgt drie extra functionaliteit:
+
+```java
+        List<AlbumEntity> findByStockItemsNotEmpty();
+
+        List<AlbumEntity> findByStockItemsEmpty();
+        
+        List<AlbumEntity> findByGenre_Id(Long genreId);
+```
+
+
+[//]: # (Todo: stap 5 maken)
 ## Stap 4 (Data)
 Vul de data.sql met data voor je nieuwe entiteiten. 
 Voeg daar ook relaties aan toe. 
@@ -207,14 +221,15 @@ Nu je de relaties in je entiteiten hebt, is je database in orde, maar je API nog
 
 
 ### Request DTO's
-- `AlbumRequestDto` bevat een verplicht "title"-veld dat 3 tot 100 tekens lang moet zijn en een "publishedYear" veld dat tussen 1877 en 2100 moet liggen. Het bevat verder een "genreId" en "publisherId". De relatie met Artis en Stock gaan we op een andere manier doen.
+- `AlbumRequestDto` bevat een verplicht "title"-veld dat 3 tot 100 tekens lang moet zijn en een "releaseYear" veld dat tussen 1877 en 2100 moet liggen. Het bevat verder een "genreId" en "publisherId". De relatie met Artist en Stock gaan we op een andere manier doen.
 - `ArtistRequestDto` bevat een verplicht "name" veld en een optioneel "biography" veld.
 - `StockRequestDto` bevat een optionele "condition" en verplichte "price" welk een positief komma getal moet zijn.
 
 ### Response DTO's
-- `AlbumResponseDto` bevat naast de "id", "title" en "publishedYear", ook een complete Genre en Publisher.
+- `AlbumResponseDto` bevat naast de "id", "title" en "releaseYear", ook een complete Genre en Publisher.
 - Maak daarnaast ook nog een `AlbumExtendedResponseDto` die van `AlbumResponseDto` overerft en daar een lijst van Stock aan toevoegt.
-- `ArtistResponseDto` en `StockResponseDto` bevatten "gewoon" alle velden uit de entiteit.
+- `ArtistResponseDto` bevat "id", "name" en "biography".
+- `StockResponseDto` bevat "id", "condition", "price".
 
 > Let er op dat "entiteiten" alleen in de communicatie met de database thuis horen.
 
@@ -223,12 +238,26 @@ Zorg dat de `AlbumDTOMapper` en de `ArtistDTOMapper` de relaties meenemen in de 
 Let op dat je deze vertaling alleen doet als er een relatie is, anders krijg je NullPointerExceptions, in het bijzonder bij de vertaling van Entity naar DTO.  
 Als je een relatie moet mappen, maak dan gebruik van Dependency Injection om de desbetreffende mapper aan te spreken, dat scheelt je dubbele code.
 
-> Tip: gebruik eventueel Jackson annotaties in je DTO's om het schooner te houden.
+> Tip: gebruik eventueel Jackson annotaties in je DTO's om het schoner te houden.
 
 Maak ook een `AlbumExtendedDTOMapper`, die de `AlbumExtendedResponseDto` returned. Je kunt dit doen door gewoon een nieuwe Mapper te maken, maar idealiter doe je dit door AlbumDtoMapper te extenden, aangezien alleen de "mapToDto" methode nodig is en niet de "mapToEntity". 
 
-Omdat `AlbumExtendedResponseDto` overerft van `AlbumResponseDto`, is dit ook mogelijk. In de AlbumExtendedResponseDto overschrijf je dan de functies die de originele DTO definieerde en zorg je dat het ook de stock in de DTO zetten. 
+Omdat `AlbumExtendedResponseDto` overerft van `AlbumResponseDto`, is het mogelijk om ook overerving toe te passen op de `AlbumExtendedDTOMapper`. Je overschrijft dan `mapToDto`. Daarin roep je als eerst `super.mapToDto` aan, maar die uitkomst "cast" je dan naar een `AlbumExtendedResponseDto`, zodat je er nog de stockItems aan toe kunt voegen: 
+```java
+AlbumExtendedResponseDTO result = (AlbumExtendedResponseDTO) super.mapToDto(model);
+```
 
+Alternatief kun je in de `AlbumDTOMapper` gebruik maken van een generic method die je voor de "mapToDto" gebruikt in zowel de `AlbumDtoMapper` als de `AlbumExtendedDtoMapper`: 
+```java
+public <D extends AlbumResponseDTO> D mapToDto(AlbumEntity model, D target);
+```
+In dat geval ziet de mapToDto er zo uit: 
+```java
+  @Override
+    public AlbumResponseDTO mapToDto(AlbumEntity model) {
+        return mapToDto(model, new AlbumResponseDTO());
+    }
+```
 
 ## Stap 6 (Functionaliteit)
 
