@@ -1,6 +1,7 @@
 package walter.duncan.vinylwebshop.services;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import walter.duncan.vinylwebshop.dtos.genre.GenreRequestDto;
 import walter.duncan.vinylwebshop.dtos.genre.GenreResponseDto;
@@ -33,6 +34,7 @@ public class GenreService extends BaseService<GenreEntity, Long> {
         return this.genreDtoMapper.toDto(this.repository.save(genreEntity));
     }
 
+    @Transactional
     public GenreResponseDto updateGenre(Long id, GenreRequestDto genreRequestDto) {
         var persistedEntity = this.getExistingById(id);
         persistedEntity.setName(genreRequestDto.getName());
@@ -41,6 +43,7 @@ public class GenreService extends BaseService<GenreEntity, Long> {
         return this.genreDtoMapper.toDto(this.repository.save(persistedEntity));
     }
 
+    @Transactional
     public void deleteGenre(Long id) {
         this.ensureExistsById(id);
         this.repository.deleteById(id);

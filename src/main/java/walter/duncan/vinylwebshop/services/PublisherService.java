@@ -1,6 +1,7 @@
 package walter.duncan.vinylwebshop.services;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import walter.duncan.vinylwebshop.dtos.publisher.PublisherRequestDto;
 import walter.duncan.vinylwebshop.dtos.publisher.PublisherResponseDto;
@@ -33,6 +34,7 @@ public class PublisherService extends BaseService<PublisherEntity, Long> {
         return this.publisherDtoMapper.toDto(this.repository.save(publisherEntity));
     }
 
+    @Transactional
     public PublisherResponseDto updatePublisher(Long id, PublisherRequestDto publisherRequestDto) {
         var persistedEntity = this.getExistingById(id);
         persistedEntity.setName(publisherRequestDto.getName());
@@ -42,6 +44,7 @@ public class PublisherService extends BaseService<PublisherEntity, Long> {
         return this.publisherDtoMapper.toDto(this.repository.save(persistedEntity));
     }
 
+    @Transactional
     public void deletePublisher(Long id) {
         this.ensureExistsById(id);
         this.repository.deleteById(id);
