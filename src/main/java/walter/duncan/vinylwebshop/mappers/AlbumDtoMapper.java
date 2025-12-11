@@ -21,15 +21,15 @@ public class AlbumDtoMapper implements DtoMapper<AlbumResponseDto, AlbumRequestD
 
     @Override
     public AlbumResponseDto toDto(AlbumEntity model) {
-        var genreDto = genreDtoMapper.toDto(model.getGenre());
-        var publisherDto = publisherDtoMapper.toDto(model.getPublisher());
+        var genre = model.getGenre();
+        var publisher = model.getPublisher();
 
         return new AlbumResponseDto(
                 model.getId(),
                 model.getTitle(),
                 model.getReleaseYear(),
-                genreDto,
-                publisherDto
+                genre != null ? genreDtoMapper.toDto(genre) : null,
+                publisher != null ? publisherDtoMapper.toDto(publisher) : null
         );
     }
 
