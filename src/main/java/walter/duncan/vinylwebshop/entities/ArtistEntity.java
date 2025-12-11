@@ -1,13 +1,29 @@
 package walter.duncan.vinylwebshop.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import org.hibernate.validator.constraints.Length;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "artists")
 public class ArtistEntity extends BaseEntity {
+    @Column(name = "name", nullable = false)
+    @Length(min = 2, max = 100)
     private String name;
+
+    @Column(name = "biography")
+    @Length(max = 5000)
     private String biography;
+
+    @ManyToMany
+    @JoinTable(
+            name = "artist_album",
+            joinColumns = @JoinColumn(name = "artist_id"),
+            inverseJoinColumns = @JoinColumn(name = "album_id")
+    )
+    private Set<AlbumEntity> albums;
+
 
     public String getName() {
         return this.name;

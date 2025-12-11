@@ -2,6 +2,7 @@ package walter.duncan.vinylwebshop.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import java.util.Set;
 @Table(name = "albums")
 public class AlbumEntity extends BaseEntity {
     @Column(name = "title", nullable = false)
+    @Length(min = 2, max = 100)
     private String title;
 
     @Column(name = "release_year")
@@ -21,6 +23,9 @@ public class AlbumEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<StockEntity> stockItems;
+
+    @ManyToMany(mappedBy = "albums")
+    private Set<ArtistEntity> artists;
 
     public String getTitle() {
         return this.title;
