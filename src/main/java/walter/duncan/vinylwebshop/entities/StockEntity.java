@@ -2,15 +2,17 @@ package walter.duncan.vinylwebshop.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 @Entity
 @Table(name = "stocks")
 public class StockEntity extends BaseEntity {
-    @Column(name = "condition", nullable = false)
+    @Column(name = "condition")
     private String condition;
 
+    @Min(0)
     @Max((long)Double.MAX_VALUE)
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private double price;
 
     @ManyToOne

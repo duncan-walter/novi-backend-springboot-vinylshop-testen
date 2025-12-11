@@ -31,7 +31,7 @@ INSERT INTO albums (title, release_year, genre_id, publisher_id, created_date, m
 VALUES ('The Nightmare Before Christmas', 1993, (SELECT id FROM genres WHERE name = 'Halloween'), (SELECT id FROM publishers WHERE name = 'Spooky records'), NOW(), NOW()),
        ('Disco Fever', 1978, (SELECT id FROM genres WHERE name = 'Disco'), (SELECT id FROM publishers WHERE name = 'Boogie Blast Publishing'), NOW(), NOW()),
        ('Thunderstrike', 1985, (SELECT id FROM genres WHERE name = 'Rock'), (SELECT id FROM publishers WHERE name = 'Electric Records'), NOW(), NOW()),
-       ('Symphony No.7 in D', 1812, (SELECT id FROM genres WHERE name = 'Classical'), (SELECT id FROM publishers WHERE name = 'Artemis Classical Press'), NOW(), NOW()),
+       ('Symphony No.7 in D', 1877, (SELECT id FROM genres WHERE name = 'Classical'), (SELECT id FROM publishers WHERE name = 'Artemis Classical Press'), NOW(), NOW()),
        ('Funky Town Revival', 1975, (SELECT id FROM genres WHERE name = '70''s'), (SELECT id FROM publishers WHERE name = 'RetroGroove Media'), NOW(), NOW());
 
 -- Arist-album data
