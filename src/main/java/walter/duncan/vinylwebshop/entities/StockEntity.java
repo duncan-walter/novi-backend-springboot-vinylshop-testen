@@ -1,13 +1,21 @@
 package walter.duncan.vinylwebshop.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 
 @Entity
 @Table(name = "stocks")
 public class StockEntity extends BaseEntity {
+    @Column(name = "condition", nullable = false)
     private String condition;
+
+    @Column(name = "price")
+    @Max((long)Double.MAX_VALUE)
     private double price;
+
+    @ManyToOne
+    @JoinColumn(name = "album_id")
+    private AlbumEntity album;
 
     public String getCondition() {
         return this.condition;
