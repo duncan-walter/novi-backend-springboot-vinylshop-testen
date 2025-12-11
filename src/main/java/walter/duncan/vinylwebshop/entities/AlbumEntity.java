@@ -50,4 +50,36 @@ public class AlbumEntity extends BaseEntity {
     public void setReleaseYear(int releaseYear) {
         this.releaseYear = releaseYear;
     }
+
+    public PublisherEntity getPublisher() {
+        return this.publisher;
+    }
+
+    public void setPublisher(PublisherEntity publisher) {
+        this.publisher = publisher;
+    }
+
+    public Set<StockEntity> getStockItems() {
+        return this.stockItems;
+    }
+
+    public void setStockItems(Set<StockEntity> stockItems) {
+        this.stockItems = stockItems;
+    }
+
+    public Set<ArtistEntity> getArtists() {
+        return this.artists;
+    }
+
+    public void setArtists(Set<ArtistEntity> artists) {
+        this.artists = artists;
+    }
+
+    public GenreEntity getGenre() {
+        return this.genre;
+    }
+
+    public void setGenre(GenreEntity genre) {
+        this.genre = genre;
+    }
 }

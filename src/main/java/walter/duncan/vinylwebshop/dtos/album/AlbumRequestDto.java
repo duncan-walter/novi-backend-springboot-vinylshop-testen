@@ -25,4 +25,12 @@ public class AlbumRequestDto {
     public int getReleaseYear() {
         return this.releaseYear;
     }
+
+    public Long getGenreId() {
+        return this.genreId;
+    }
+
+    public Long getPublisherId() {
+        return this.publisherId;
+    }
 }

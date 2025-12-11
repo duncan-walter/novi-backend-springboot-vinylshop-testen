@@ -11,12 +11,25 @@ import java.util.List;
 
 @Component
 public class AlbumDtoMapper implements DtoMapper<AlbumResponseDto, AlbumRequestDto, AlbumEntity> {
+    private final GenreDtoMapper genreDtoMapper;
+    private final PublisherDtoMapper publisherDtoMapper;
+
+    public AlbumDtoMapper(GenreDtoMapper genreDtoMapper, PublisherDtoMapper publisherDtoMapper) {
+        this.genreDtoMapper = genreDtoMapper;
+        this.publisherDtoMapper = publisherDtoMapper;
+    }
+
     @Override
     public AlbumResponseDto toDto(AlbumEntity model) {
+        var genreDto = genreDtoMapper.toDto(model.getGenre());
+        var publisherDto = publisherDtoMapper.toDto(model.getPublisher());
+
         return new AlbumResponseDto(
                 model.getId(),
                 model.getTitle(),
-                model.getReleaseYear()
+                model.getReleaseYear(),
+                genreDto,
+                publisherDto
         );
     }
 
