@@ -16,7 +16,7 @@ public class GenreService extends BaseService<GenreEntity, Long> {
     private final GenreDtoMapper genreDtoMapper;
 
     public GenreService(GenreRepository genreRepository, GenreDtoMapper genreDtoMapper) {
-        super(genreRepository);
+        super(genreRepository, GenreEntity.class);
         this.genreDtoMapper = genreDtoMapper;
     }
 

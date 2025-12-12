@@ -1,19 +1,21 @@
 package walter.duncan.vinylwebshop.services;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+
+import walter.duncan.vinylwebshop.exceptions.ResourceNotFoundException;
 
 public abstract class BaseService<TEntity, TId> {
     protected final JpaRepository<TEntity, TId> repository;
+    private final Class<TEntity> entityClass;
 
-    protected BaseService(JpaRepository<TEntity, TId> repository) {
+    protected BaseService(JpaRepository<TEntity, TId> repository, Class<TEntity> entityClass) {
         this.repository = repository;
+        this.entityClass = entityClass;
     }
 
     protected void ensureExistsById(TId id) {
         if (!this.repository.existsById(id)) {
-            this.throwNotFound(id);
+            this.throwResourceNotFoundException(id);
         }
     }
 
@@ -21,16 +23,14 @@ public abstract class BaseService<TEntity, TId> {
         var entity = this.repository.findById(id);
 
         if (entity.isEmpty()) {
-            this.throwNotFound(id);
+            this.throwResourceNotFoundException(id);
         }
 
         return entity.get();
     }
 
-    private void throwNotFound(TId id) {
-        throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Entity with id " + id + " not found"
-        );
+    private void throwResourceNotFoundException(TId id) {
+        String entityName = entityClass.getSimpleName().replaceAll("Entity", "");
+        throw new ResourceNotFoundException(entityName + " with id " + id + " not found.");
     }
 }

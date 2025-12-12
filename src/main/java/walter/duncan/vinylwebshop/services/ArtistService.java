@@ -16,7 +16,7 @@ public class ArtistService extends BaseService<ArtistEntity, Long> {
     private final ArtistDtoMapper artistDtoMapper;
 
     protected ArtistService(ArtistRepository artistRepository, ArtistDtoMapper artistDtoMapper) {
-        super(artistRepository);
+        super(artistRepository, ArtistEntity.class);
         this.artistDtoMapper = artistDtoMapper;
     }
 

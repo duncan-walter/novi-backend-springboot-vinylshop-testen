@@ -16,7 +16,7 @@ public class AlbumService extends BaseService<AlbumEntity, Long> {
     private final AlbumDtoMapper albumDtoMapper;
 
     protected AlbumService(AlbumRepository albumRepository, AlbumDtoMapper albumDtoMapper) {
-        super(albumRepository);
+        super(albumRepository, AlbumEntity.class);
         this.albumDtoMapper = albumDtoMapper;
     }
 

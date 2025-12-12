@@ -16,7 +16,7 @@ public class StockService extends BaseService<StockEntity, Long> {
     private final StockDtoMapper stockDtoMapper;
 
     protected StockService(StockRepository stockRepository, StockDtoMapper stockDtoMapper) {
-        super(stockRepository);
+        super(stockRepository, StockEntity.class);
         this.stockDtoMapper = stockDtoMapper;
     }
 

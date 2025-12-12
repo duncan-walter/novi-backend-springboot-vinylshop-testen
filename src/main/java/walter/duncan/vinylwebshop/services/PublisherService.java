@@ -16,7 +16,7 @@ public class PublisherService extends BaseService<PublisherEntity, Long> {
     private final PublisherDtoMapper publisherDtoMapper;
 
     public PublisherService(PublisherRepository publisherRepository, PublisherDtoMapper publisherDtoMapper) {
-        super(publisherRepository);
+        super(publisherRepository, PublisherEntity.class);
         this.publisherDtoMapper = publisherDtoMapper;
     }
 
