@@ -14,7 +14,7 @@ import walter.duncan.vinylwebshop.repositories.AlbumRepository;
 import java.util.List;
 
 @Service
-public class AlbumService extends BaseService<AlbumEntity, Long> {
+public class AlbumService extends BaseService<AlbumEntity, Long, AlbumRepository> {
     private final AlbumDtoMapper albumDtoMapper;
     private final GenreService genreService;
     private final PublisherService publisherService;

@@ -12,7 +12,7 @@ import walter.duncan.vinylwebshop.repositories.StockRepository;
 import java.util.List;
 
 @Component
-public class StockService extends BaseService<StockEntity, Long> {
+public class StockService extends BaseService<StockEntity, Long, StockRepository> {
     private final StockDtoMapper stockDtoMapper;
 
     protected StockService(StockRepository stockRepository, StockDtoMapper stockDtoMapper) {

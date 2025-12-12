@@ -5,11 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import walter.duncan.vinylwebshop.entities.BaseEntity;
 import walter.duncan.vinylwebshop.exceptions.ResourceNotFoundException;
 
-public abstract class BaseService<TEntity extends BaseEntity, TId> {
-    protected final JpaRepository<TEntity, TId> repository;
+public abstract class BaseService<TEntity extends BaseEntity, TId, TRepository extends JpaRepository<TEntity, TId>> {
+    protected final TRepository repository;
     private final Class<TEntity> entityClass;
 
-    protected BaseService(JpaRepository<TEntity, TId> repository, Class<TEntity> entityClass) {
+    protected BaseService(TRepository repository, Class<TEntity> entityClass) {
         this.repository = repository;
         this.entityClass = entityClass;
     }

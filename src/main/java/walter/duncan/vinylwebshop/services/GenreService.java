@@ -12,7 +12,7 @@ import walter.duncan.vinylwebshop.repositories.GenreRepository;
 import java.util.List;
 
 @Service
-public class GenreService extends BaseService<GenreEntity, Long> {
+public class GenreService extends BaseService<GenreEntity, Long, GenreRepository> {
     private final GenreDtoMapper genreDtoMapper;
 
     public GenreService(GenreRepository genreRepository, GenreDtoMapper genreDtoMapper) {

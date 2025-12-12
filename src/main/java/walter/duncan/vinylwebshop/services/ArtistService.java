@@ -12,7 +12,7 @@ import walter.duncan.vinylwebshop.repositories.ArtistRepository;
 import java.util.List;
 
 @Service
-public class ArtistService extends BaseService<ArtistEntity, Long> {
+public class ArtistService extends BaseService<ArtistEntity, Long, ArtistRepository> {
     private final ArtistDtoMapper artistDtoMapper;
 
     protected ArtistService(ArtistRepository artistRepository, ArtistDtoMapper artistDtoMapper) {

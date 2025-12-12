@@ -12,7 +12,7 @@ import walter.duncan.vinylwebshop.repositories.PublisherRepository;
 import java.util.List;
 
 @Service
-public class PublisherService extends BaseService<PublisherEntity, Long> {
+public class PublisherService extends BaseService<PublisherEntity, Long, PublisherRepository> {
     private final PublisherDtoMapper publisherDtoMapper;
 
     public PublisherService(PublisherRepository publisherRepository, PublisherDtoMapper publisherDtoMapper) {
