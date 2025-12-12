@@ -6,7 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import walter.duncan.vinylwebshop.dtos.stock.StockRequestDto;
 import walter.duncan.vinylwebshop.dtos.stock.StockResponseDto;
 import walter.duncan.vinylwebshop.entities.StockEntity;
-import walter.duncan.vinylwebshop.mappers.AlbumExtendedDtoMapper;
+import walter.duncan.vinylwebshop.exceptions.BusinessRuleViolation;
+import walter.duncan.vinylwebshop.exceptions.BusinessRuleViolationException;
 import walter.duncan.vinylwebshop.mappers.StockDtoMapper;
 import walter.duncan.vinylwebshop.repositories.StockRepository;
 
@@ -62,8 +63,16 @@ public class StockService extends BaseService<StockEntity, Long, StockRepository
     }
 
     @Transactional
-    public void deleteStock(Long id) {
-        this.ensureExistsById(id);
-        this.repository.deleteById(id);
+    public void deleteStock(Long id, Long albumId) {
+        var persistedEntity = this.getExistingById(id);
+
+        if (!persistedEntity.getAlbum().getId().equals(albumId)) {
+            throw new BusinessRuleViolationException(
+                    BusinessRuleViolation.STOCK_DOES_NOT_BELONG_TO_ALBUM,
+                    String.format("Stock with id %s does not belong to album with id %s", id, albumId)
+            );
+        }
+
+        this.repository.deleteByIdAndAlbumId(id, albumId);
     }
 }

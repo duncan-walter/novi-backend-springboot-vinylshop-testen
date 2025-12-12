@@ -54,8 +54,8 @@ public class StockController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteStock(@PathVariable Long id) {
-        this.stockService.deleteStock(id);
+    public ResponseEntity<Object> deleteStock(@PathVariable Long id, @PathVariable Long albumId) {
+        this.stockService.deleteStock(id, albumId);
 
         return ResponseEntity.noContent().build();
     }

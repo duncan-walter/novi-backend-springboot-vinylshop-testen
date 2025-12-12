@@ -111,7 +111,7 @@ public class AlbumService extends BaseService<AlbumEntity, Long, AlbumRepository
 
         if (!persistedEntity.getStockItems().isEmpty()) {
             throw new BusinessRuleViolationException(
-                    BusinessRuleViolation.CANT_DELETE_ALBUM_WHEN_IT_HAS_STOCK,
+                    BusinessRuleViolation.CANNOT_DELETE_ALBUM_WHEN_IT_HAS_STOCK,
                     String.format("Unable to delete album with id %s since it has stock linked to it", id)
             );
         }

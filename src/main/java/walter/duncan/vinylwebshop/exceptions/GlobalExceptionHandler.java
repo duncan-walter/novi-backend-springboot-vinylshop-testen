@@ -71,14 +71,15 @@ public class GlobalExceptionHandler {
         problemDetail.setTitle("Unprocessable Entity");
         problemDetail.setDetail("A business rule was violated.");
 
-        String businessRuleError = exception.getMessage();
+        Map<String, String> businessRuleErrors = new HashMap<>();
+        businessRuleErrors.put(exception.getCode().toString(), exception.getMessage());
 
-        /* TODO: Ensure this has the same structure as validation errors.
+        /* TODO: Look into collecting multiple business rule violations during one response.
             At the moment this can't be achieved yet since a BusinessRuleViolationException is thrown when it is found.
             Perhaps this can be fixed with the a notification collector?
          */
-        Map<String, String> errors = new HashMap<>();
-        errors.put("businessRuleViolation", businessRuleError);
+        Map<String, Map<String, String>> errors = new HashMap<>();
+        errors.put("businessRuleViolation", businessRuleErrors);
         problemDetail.setProperty("errors", errors);
 
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);

@@ -316,7 +316,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Spook 'm\",\r\n    \"releaseYear\": 1997\r\n}",
+							"raw": "{\r\n    \"title\": \"Spook 'm\",\r\n    \"releaseYear\": 1997,\r\n    \"genreId\": 1,\r\n    \"publisherId\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -342,7 +342,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Spook 'm\",\r\n    \"releaseYear\": 1997\r\n}",
+							"raw": "{\r\n    \"title\": \"Spook 'm\",\r\n    \"releaseYear\": 1997,\r\n    \"genreId\": 2,\r\n    \"publisherId\": 2\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -385,6 +385,66 @@
 							"variable": [
 								{
 									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Link artist to album",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/albums/:id/artists/:artistId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"albums",
+								":id",
+								"artists",
+								":artistId"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "artistId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unlink artist from album",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/albums/:id/artists/:artistId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"albums",
+								":id",
+								"artists",
+								":artistId"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "artistId",
 									"value": "1"
 								}
 							]
@@ -527,20 +587,26 @@
 			"name": "Stocks",
 			"item": [
 				{
-					"name": "Get stock by id",
+					"name": "Get stock by id and album id",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/stocks/:id",
+							"raw": "{{baseUrl}}/albums/:albumId/stocks/:id",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
+								"albums",
+								":albumId",
 								"stocks",
 								":id"
 							],
 							"variable": [
+								{
+									"key": "albumId",
+									"value": "1"
+								},
 								{
 									"key": "id",
 									"value": "1"
@@ -551,24 +617,32 @@
 					"response": []
 				},
 				{
-					"name": "Get all stocks",
+					"name": "Get all stocks by album id",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/stocks",
+							"raw": "{{baseUrl}}/albums/:albumId/stocks",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
+								"albums",
+								":albumId",
 								"stocks"
+							],
+							"variable": [
+								{
+									"key": "albumId",
+									"value": "1"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Create stock",
+					"name": "Create stock by album id",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -582,19 +656,27 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/stocks",
+							"raw": "{{baseUrl}}/albums/:albumId/stocks",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
+								"albums",
+								":albumId",
 								"stocks"
+							],
+							"variable": [
+								{
+									"key": "albumId",
+									"value": "1"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Update stock",
+					"name": "Update stock by album id",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -608,15 +690,21 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/stocks/:id",
+							"raw": "{{baseUrl}}/albums/:albumId/stocks/:id",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
+								"albums",
+								":albumId",
 								"stocks",
 								":id"
 							],
 							"variable": [
+								{
+									"key": "albumId",
+									"value": "1"
+								},
 								{
 									"key": "id",
 									"value": "1"
@@ -627,20 +715,26 @@
 					"response": []
 				},
 				{
-					"name": "Delete stock",
+					"name": "Delete stock by album id",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/stocks/:id",
+							"raw": "{{baseUrl}}/albums/:albumId/stocks/:id",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
+								"albums",
+								":albumId",
 								"stocks",
 								":id"
 							],
 							"variable": [
+								{
+									"key": "albumId",
+									"value": "1"
+								},
 								{
 									"key": "id",
 									"value": "1"
