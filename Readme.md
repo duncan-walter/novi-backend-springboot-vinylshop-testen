@@ -15,18 +15,18 @@ Je schrijft **minstens 10 unittesten** voor de `AlbumService` waarbij je een **l
 
 Daarnaast schrijf je **2 integratie testen** voor het Genre domein. Schrijf in ieder geval een test voor de `POST /genres`.
 
-Optioneel mag je ook unittesten voor een van de andere service klassen: 
+Optioneel mag je ook unittesten voor een van de andere service klassen (Waarbij je tevens een line-coverage van 100% weet te behalen): 
 - `GenreService`
 - `PublisherService`
 - `StockService`
 - `ArtistService`
-Waarbij je tevens een line-coverage van 100% weet te behalen.
+
 
 # Randvoorwaarden
 
 - Je voldoet aan de randvoorwaarden van de vorige opdracht.
-- Je hebt 2 service klasse voor 100% (line coverage) getest.
-- Je hebt 2 integratietesten.
+- Je hebt de `AlbumService`-klasse voor 100% (line coverage) getest.
+- Je hebt 2 integratietesten, waarvan ten minste `POST /genres`.
 - Je hebt de juiste dependencies
 - Je tests hebben goede, beschrijvende namen.
 
@@ -50,7 +50,7 @@ Er zijn verschillende manieren om de unittesten te implementeren, maar er zijn e
 
 ## Stap 2 (Profiel)
 Maak een test-profiel aan in je test.resources map.
-In dit profiel maak zorg je er onder andere voor dat je gebruik maakt van een test-database.
+In dit profiel zorg je er onder andere voor dat je gebruik maakt van een test-database.
 Zorg dat je de juiste dependency in je `pom.xml` hebt staan.
 
 ## Stap 3 (Integratietesten)
