@@ -15,7 +15,7 @@ Je schrijft **minstens 10 unittesten** voor de `AlbumService` waarbij je een **l
 
 Daarnaast schrijf je **2 integratie testen** voor het Genre domein. Schrijf in ieder geval een test voor de `POST /genres`.
 
-Optioneel mag je ook unittesten voor een van de andere service klassen (Waarbij je tevens een line-coverage van 100% weet te behalen): 
+Optioneel mag je ook unittesten voor een van de andere service klassen (Waarbij je tevens een line-coverage van 100% weet te behalen):
 - `GenreService`
 - `PublisherService`
 - `StockService`
@@ -33,7 +33,7 @@ Optioneel mag je ook unittesten voor een van de andere service klassen (Waarbij 
 # Stappenplan
 
 ## Stap 1 (Unittesten)
-Er zijn verschillende manieren om de unittesten te implementeren, maar er zijn een aantal vaste elementen. 
+Er zijn verschillende manieren om de unittesten te implementeren, maar er zijn een aantal vaste elementen.
 - Zet de juiste annotatie boven je testklasse
 - Zet de juiste annotatie boven je tests
 - Gebruik `@Mock` of `Mockito.mock()` om mocks te maken van alle afhankelijkheden van de klasse onder test.
