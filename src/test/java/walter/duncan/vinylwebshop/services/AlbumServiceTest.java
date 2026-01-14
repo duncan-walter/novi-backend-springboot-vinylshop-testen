@@ -18,6 +18,7 @@ import walter.duncan.vinylwebshop.dtos.stock.StockResponseDto;
 import walter.duncan.vinylwebshop.entities.*;
 import walter.duncan.vinylwebshop.exceptions.BusinessRuleViolation;
 import walter.duncan.vinylwebshop.exceptions.BusinessRuleViolationException;
+import walter.duncan.vinylwebshop.exceptions.ResourceNotFoundException;
 import walter.duncan.vinylwebshop.mappers.AlbumDtoMapper;
 import walter.duncan.vinylwebshop.mappers.AlbumExtendedDtoMapper;
 import walter.duncan.vinylwebshop.repositories.AlbumRepository;
@@ -51,10 +52,6 @@ class AlbumServiceTest {
 
     @Mock
     private ArtistService artistService;
-
-    @BeforeEach
-    void setUp() {
-    }
 
     @Test
     void findAllAlbums_shouldReturnListOfAlbumExtendedResponseDtos() {
@@ -137,6 +134,20 @@ class AlbumServiceTest {
         assertEquals(albumExtendedResponseDto, result);
         verify(albumRepository, times(1)).findById(albumId);
         verify(albumExtendedDtoMapper, times(1)).toDto(albumEntity);
+    }
+
+    @Test
+    void findAlbumById_withNonExistingAlbumId_shouldThrowResourceNotFoundException() {
+        // Arrange
+        var albumId = 1337L;
+
+        when(albumRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // Act & Assert
+        var exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> albumService.findAlbumById(albumId)
+        );
     }
 
     @Test
