@@ -194,7 +194,19 @@ class AlbumServiceTest {
     }
 
     @Test
-    void deleteAlbum() {
+    void deleteAlbum_withExistingAlbum_shouldDeleteAlbum() {
+        // Arrange
+        var albumId = 1L;
+        var persistedAlbumEntity = AlbumTestData.albumEntity(albumId, "Makes you think", 2026);
+
+        when(albumRepository.findById(albumId)).thenReturn(Optional.of(persistedAlbumEntity));
+
+        // Act
+        albumService.deleteAlbum(albumId);
+
+        // Assert
+        verify(albumRepository, times(1)).findById(albumId);
+        verify(albumRepository, times(1)).deleteById(albumId);
     }
 
     @Test
