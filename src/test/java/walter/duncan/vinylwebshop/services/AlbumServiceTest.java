@@ -9,6 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.test.util.ReflectionTestUtils;
 import walter.duncan.vinylwebshop.dtos.album.AlbumExtendedResponseDto;
+import walter.duncan.vinylwebshop.dtos.album.AlbumRequestDto;
+import walter.duncan.vinylwebshop.dtos.album.AlbumResponseDto;
 import walter.duncan.vinylwebshop.dtos.artist.ArtistResponseDto;
 import walter.duncan.vinylwebshop.dtos.genre.GenreResponseDto;
 import walter.duncan.vinylwebshop.dtos.publisher.PublisherResponseDto;
@@ -56,20 +58,12 @@ class AlbumServiceTest {
     void findAllAlbums_shouldReturnListOfAlbumExtendedResponseDtos() {
         // Arrange
         var albumExtendedResponseDtos = List.of(
-                AlbumTestData.albumExtendedDto(1L, 1L),
-                AlbumTestData.albumExtendedDto(1L, 2L)
+                AlbumTestData.albumExtendedResponseDto(1L, 1L),
+                AlbumTestData.albumExtendedResponseDto(1L, 2L)
         );
 
-        var genreEntity = new GenreEntity();
-        ReflectionTestUtils.setField(genreEntity, "id", 1L);
-        genreEntity.setName("Halloween");
-        genreEntity.setDescription("Very spooky");
-
-        var publisherEntity = new PublisherEntity();
-        ReflectionTestUtils.setField(publisherEntity, "id", 1L);
-        publisherEntity.setName("Spooky records");
-        publisherEntity.setAddress("1 Spooky avenue");
-        publisherEntity.setContactDetails("+1 217-703-2085");
+        var genreEntity = GenreTestData.genreEntity(1L);
+        var publisherEntity = PublisherTestData.publisherEntity(1L);
 
         var stockEntity = new StockEntity();
         ReflectionTestUtils.setField(stockEntity, "id", 1L);
@@ -116,7 +110,7 @@ class AlbumServiceTest {
     void findAlbumById_shouldReturnExtendedAlbumDto() {
         // Arrange
         var albumId = 2L;
-        var albumExtendedResponseDto = AlbumTestData.albumExtendedDto(albumId, 2L);
+        var albumExtendedResponseDto = AlbumTestData.albumExtendedResponseDto(albumId, 2L);
         var albumEntity = AlbumTestData.albumEntity(albumId);
 
         when(albumRepository.findById(albumId)).thenReturn(Optional.of(albumEntity));
@@ -126,14 +120,38 @@ class AlbumServiceTest {
         var result = albumService.findAlbumById(albumId);
 
         // Assert
-        assertEquals(result, albumExtendedResponseDto);
+        assertEquals(albumExtendedResponseDto, result);
         verify(albumRepository, times(1)).findById(albumId);
         verify(albumExtendedDtoMapper, times(1)).toDto(albumEntity);
     }
 
     @Test
-    void createAlbum() {
-        // Captor gebruiken om te oefenen
+    void createAlbum_withExistingGenreAndPublisher_shouldReturnCreatedAlbumResponseDto() {
+        // Arrange
+        var albumId = 1L;
+        var genreId = 1L;
+        var publisherId = 1L;
+        var albumRequestDto = AlbumTestData.albumRequestDto();
+        var albumResponseDto = AlbumTestData.albumResponseDto(albumId);
+        var mappedAlbumEntity = AlbumTestData.albumEntity();
+        var createdAlbumEntity = AlbumTestData.albumEntity(albumId);
+        var genreEntity = GenreTestData.genreEntity(genreId);
+        var publisherEntity = PublisherTestData.publisherEntity(publisherId);
+
+        when(albumRepository.save(mappedAlbumEntity)).thenReturn(createdAlbumEntity);
+        when(albumDtoMapper.toEntity(albumRequestDto)).thenReturn(mappedAlbumEntity);
+        when(genreService.getExistingById(genreId)).thenReturn(genreEntity);
+        when(publisherService.getExistingById(publisherId)).thenReturn(publisherEntity);
+        when(albumDtoMapper.toDto(createdAlbumEntity)).thenReturn(albumResponseDto);
+
+        // Act
+        var result = albumService.createAlbum(albumRequestDto);
+
+        // Assert
+        assertEquals(albumResponseDto, result);
+        verify(albumRepository, times(1)).save(mappedAlbumEntity);
+        verify(genreService, times(1)).getExistingById(genreId);
+        verify(publisherService, times(1)).getExistingById(publisherId);
     }
 
     @Test
@@ -158,17 +176,47 @@ class AlbumServiceTest {
 class AlbumTestData {
     private AlbumTestData() { }
 
+    public static AlbumEntity albumEntity() {
+        return albumEntity(null);
+    }
+
     public static AlbumEntity albumEntity(Long id) {
         var albumEntity = new AlbumEntity();
-        // Using reflection since there is no setter for the id field and there is no point introducing it in production code since it's not used.
-        ReflectionTestUtils.setField(albumEntity, "id", id);
+
+        if (id != null) {
+            // Using reflection since there is no setter for the id field and there is no point introducing it in production code since it's not used.
+            ReflectionTestUtils.setField(albumEntity, "id", id);
+        }
+
         albumEntity.setTitle("The Nightmare Before Christmas");
         albumEntity.setReleaseYear(1993);
+        albumEntity.setGenre(GenreTestData.genreEntity(1L));
+        albumEntity.setPublisher(PublisherTestData.publisherEntity(1L));
 
         return albumEntity;
     }
 
-    public static AlbumExtendedResponseDto albumExtendedDto(Long id, Long stockId) {
+    public static AlbumRequestDto albumRequestDto() {
+        var albumRequestDto = new AlbumRequestDto();
+        ReflectionTestUtils.setField(albumRequestDto, "title", "The Nightmare Before Christmas");
+        ReflectionTestUtils.setField(albumRequestDto, "releaseYear", 1993);
+        ReflectionTestUtils.setField(albumRequestDto, "genreId", 1L);
+        ReflectionTestUtils.setField(albumRequestDto, "publisherId", 1L);
+
+        return albumRequestDto;
+    }
+
+    public static AlbumResponseDto albumResponseDto(Long id) {
+        return new AlbumResponseDto(
+                id,
+                "The Nightmare Before Christmas",
+                1993,
+                new GenreResponseDto(1L, "Halloween", "Very spooky"),
+                new PublisherResponseDto(1L, "Spooky records", "1 Spooky avenue", "+1 217-703-2085")
+        );
+    }
+
+    public static AlbumExtendedResponseDto albumExtendedResponseDto(Long id, Long stockId) {
         return new AlbumExtendedResponseDto(
                 id,
                 "The Nightmare Before Christmas",
@@ -178,5 +226,40 @@ class AlbumTestData {
                 List.of(new StockResponseDto(stockId, "Used", 10.0)),
                 List.of(new ArtistResponseDto(1L, "Mr. Skeleton", "He has lived his year spooking many people with his music, now he's dead. Serves him right."))
         );
+    }
+}
+
+class GenreTestData {
+    private GenreTestData() { }
+
+    public static GenreEntity genreEntity(Long id) {
+        var genreEntity = new GenreEntity();
+
+        if (id != null) {
+            ReflectionTestUtils.setField(genreEntity, "id", id);
+        }
+
+        genreEntity.setName("Halloween");
+        genreEntity.setDescription("Very spooky");
+
+        return genreEntity;
+    }
+}
+
+class PublisherTestData {
+    private PublisherTestData() { }
+
+    public static PublisherEntity publisherEntity(Long id) {
+        var publisherEntity = new PublisherEntity();
+
+        if (id != null) {
+            ReflectionTestUtils.setField(publisherEntity, "id", id);
+        }
+
+        publisherEntity.setName("Spooky records");
+        publisherEntity.setAddress("1 Spooky avenue");
+        publisherEntity.setContactDetails("+1 217-703-2085");
+
+        return publisherEntity;
     }
 }
