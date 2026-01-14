@@ -20,6 +20,7 @@ import walter.duncan.vinylwebshop.repositories.AlbumRepository;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -112,7 +113,22 @@ class AlbumServiceTest {
     }
 
     @Test
-    void findAlbumById() {
+    void findAlbumById_shouldReturnExtendedAlbumDto() {
+        // Arrange
+        var albumId = 2L;
+        var albumExtendedResponseDto = AlbumTestData.albumExtendedDto(albumId, 2L);
+        var albumEntity = AlbumTestData.albumEntity(albumId);
+
+        when(albumRepository.findById(albumId)).thenReturn(Optional.of(albumEntity));
+        when(albumExtendedDtoMapper.toDto(albumEntity)).thenReturn(albumExtendedResponseDto);
+
+        // Act
+        var result = albumService.findAlbumById(albumId);
+
+        // Assert
+        assertEquals(result, albumExtendedResponseDto);
+        verify(albumRepository, times(1)).findById(albumId);
+        verify(albumExtendedDtoMapper, times(1)).toDto(albumEntity);
     }
 
     @Test
@@ -144,6 +160,7 @@ class AlbumTestData {
 
     public static AlbumEntity albumEntity(Long id) {
         var albumEntity = new AlbumEntity();
+        // Using reflection since there is no setter for the id field and there is no point introducing it in production code since it's not used.
         ReflectionTestUtils.setField(albumEntity, "id", id);
         albumEntity.setTitle("The Nightmare Before Christmas");
         albumEntity.setReleaseYear(1993);
