@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,12 +23,6 @@ import walter.duncan.vinylwebshop.dtos.genre.GenreResponseDto;
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
-/* TODO: Fix this workaround
-    For some reason using spring.sql.init.mode=always in application-test.properties would insert duplicate rows, as if the script is being executed twice.
-    This caused the script to fail, and consequently, the test itself.
-    The workaround for now is the set spring.sql.init.mode to never and use the @Sql("/vinyl-webshop-test.sql") annotation
- */
-@Sql("/vinyl-webshop-test.sql")
 public class GenreControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
